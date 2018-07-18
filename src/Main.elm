@@ -8,9 +8,30 @@ import Dom.Scroll exposing (..)
 import Task exposing (..)
 
 
-init =
+type Msg
+    = NewMessage String
+    | UpdateLine String
+    | Submit
+    | NoOp
+
+
+type alias Model =
+    { messages : List String
+    , line : String
+    , guid : String
+    }
+
+
+type alias Flags =
+    { guid : String
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     ( { messages = []
       , line = ""
+      , guid = flags.guid
       }
     , Cmd.none
     )
@@ -76,23 +97,6 @@ serverAddr =
     "ws://localhost:9160"
 
 
-guid =
-    "012345678901234567890123456789012345"
-
-
-type Msg
-    = NewMessage String
-    | UpdateLine String
-    | Submit
-    | NoOp
-
-
-type alias Model =
-    { messages : List String
-    , line : String
-    }
-
-
 scrollToBottom : Cmd Msg
 scrollToBottom =
     Task.attempt (always NoOp) <| toBottom "history"
@@ -109,7 +113,7 @@ update msg model =
             ( { model | line = text }, Cmd.none )
 
         Submit ->
-            ( { model | line = "" }, WebSocket.send serverAddr <| guid ++ model.line )
+            ( { model | line = "" }, WebSocket.send serverAddr <| model.guid ++ model.line )
 
         NoOp ->
             ( model, Cmd.none )
@@ -122,7 +126,7 @@ subscriptions model =
 
 
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , view = view
         , update = update

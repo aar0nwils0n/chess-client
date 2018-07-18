@@ -1,0 +1,24 @@
+<html>
+<script src="./node_modules/lil-uuid/uuid.min.js"></script>
+<script src="/_compile/src/Main.elm"></script>
+<style>
+    html,
+    body {
+        padding: 0;
+        margin: 0
+    }
+</style>
+
+<body>
+    <div id="my-app"></div>
+</body>
+<script>
+    var node = document.getElementById('my-app');
+
+    var app = Elm.Main.embed(node, {
+        guid: lil.uuid()
+        ,
+    });
+</script>
+
+</html>
